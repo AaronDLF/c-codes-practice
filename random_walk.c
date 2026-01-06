@@ -1,4 +1,6 @@
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_rect.h>
+#include <SDL2/SDL_stdinc.h>
 #include <SDL2/SDL_video.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -6,12 +8,17 @@
 
 #define WIDTH 900
 #define HEIGHT 600
-
 #define SCALE 10
+#define AGENT_SIZE 2
 
 typedef struct {
   int vx, vy;
 } Velocity;
+
+typedef struct {
+  int x, y;
+  Uint32 color;
+} Agent;
 
 Velocity get_rand_step() {
   int choice = rand() / (RAND_MAX / 4);
@@ -34,6 +41,22 @@ Velocity get_rand_step() {
   exit(-1);
 }
 
+void move_agent(SDL_Surface *psurface, Agent *pagent) {
+  Velocity v = get_rand_step();
+  for (int i = 0; i < SCALE; i++) {
+    pagent->x += v.vx;
+    pagent->y += v.vy;
+
+    if (pagent->x < 0 || pagent->x >= WIDTH)
+      v.vx *= -1;
+    if (pagent->y < 0 || pagent->y >= HEIGHT)
+      v.vy *= -1;
+    SDL_Rect rect = (SDL_Rect){pagent->x, pagent->y, AGENT_SIZE, AGENT_SIZE};
+
+    SDL_FillRect(psurface, &rect, pagent->color);
+  }
+}
+
 int main(int argc, char *argv[]) {
   int num_agents;
 
@@ -53,7 +76,8 @@ int main(int argc, char *argv[]) {
                        SDL_WINDOWPOS_CENTERED, WIDTH, HEIGHT, 0);
   SDL_Surface *psurface = SDL_GetWindowSurface(pwindow);
 
-  SDL_Rect rect = (SDL_Rect){WIDTH / 2, HEIGHT / 2, 2, 2};
+  Agent *pagents = calloc(num_agents, sizeof(Agent));
+  Agent agent0 = (Agent){WIDTH / 2, HEIGHT / 2, 0xFF0000};
 
   int app_running = 1;
   while (app_running) {
@@ -64,18 +88,8 @@ int main(int argc, char *argv[]) {
       }
     }
 
-    Velocity v = get_rand_step();
-    for (int i = 0; i < SCALE; i++) {
-      rect.x += v.vx;
-      rect.y += v.vy;
+    move_agent(psurface, &agent0);
 
-      if (rect.x < 0 || rect.x >= WIDTH)
-        v.vx *= -1;
-      if (rect.y < 0 || rect.y >= HEIGHT)
-        v.vy *= -1;
-
-      SDL_FillRect(psurface, &rect, 0xFFFFFF);
-    }
     SDL_UpdateWindowSurface(pwindow);
     SDL_Delay(20);
   }
