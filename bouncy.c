@@ -4,11 +4,15 @@
 
 #define WIDTH 900
 #define HEIGHT 600
+#define WHITE_COLOR 0xFFFFFFFF
+#define A_GRAVITY 10
 
 struct Circle {
   int x;
   int y;
   int radius;
+  int vx;
+  int vy;
 };
 
 void FillCircle(SDL_Surface *psurface, struct Circle circle) {
@@ -25,10 +29,16 @@ void FillCircle(SDL_Surface *psurface, struct Circle circle) {
           (x - circle.x) * (x - circle.x) + (y - circle.y) * (y - circle.y);
       if (center_distance_squared < radius_squared) {
         SDL_Rect pixel = (SDL_Rect){x, y, 1, 1};
-        SDL_FillRect(psurface, &pixel, 0xFFFFFFFF);
+        SDL_FillRect(psurface, &pixel, WHITE_COLOR);
       }
     }
   }
+}
+
+void step(struct Circle *circle) {
+  circle->x += circle->vx;
+  circle->y += circle->vy;
+  circle->vy += A_GRAVITY;
 }
 
 int main() {
@@ -41,9 +51,20 @@ int main() {
                        SDL_WINDOWPOS_CENTERED, WIDTH, HEIGHT, 0);
   SDL_Surface *psurface = SDL_GetWindowSurface(pwindow);
 
-  struct Circle circle = (struct Circle){200, 200, 50};
+  struct Circle circle = (struct Circle){200, 200, 50, 1, 1};
   FillCircle(psurface, circle);
   SDL_UpdateWindowSurface(pwindow);
+
+  SDL_Event event;
+  int simulation = 1;
+
+  while (simulation) {
+    while (SDL_PollEvent(&event)) {
+      if (event.type == SDL_QUIT) {
+        simulation = 0;
+      }
+    }
+  }
 
   SDL_Delay(3000);
 }
