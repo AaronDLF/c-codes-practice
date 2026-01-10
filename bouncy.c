@@ -18,6 +18,17 @@ void FillCircle(SDL_Surface *psurface, struct Circle circle) {
   int higher_y = circle.y + circle.radius;
 
   int radius_squared = circle.radius * circle.radius;
+
+  for (int x = lower_x; x <= higher_x; x++) {
+    for (int y = lower_y; y <= higher_y; y++) {
+      int center_distance_squared =
+          (x - circle.x) * (x - circle.x) + (y - circle.y) * (y - circle.y);
+      if (center_distance_squared < radius_squared) {
+        SDL_Rect pixel = (SDL_Rect){x, y, 1, 1};
+        SDL_FillRect(psurface, &pixel, 0xFFFFFFFF);
+      }
+    }
+  }
 }
 
 int main() {
@@ -30,8 +41,8 @@ int main() {
                        SDL_WINDOWPOS_CENTERED, WIDTH, HEIGHT, 0);
   SDL_Surface *psurface = SDL_GetWindowSurface(pwindow);
 
-  SDL_Rect rect = (SDL_Rect){100, 100, 50, 50};
-  SDL_FillRect(psurface, &rect, SDL_MapRGB(psurface->format, 255, 0, 0));
+  struct Circle circle = (struct Circle){200, 200, 50};
+  FillCircle(psurface, circle);
   SDL_UpdateWindowSurface(pwindow);
 
   SDL_Delay(3000);
