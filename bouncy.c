@@ -6,27 +6,27 @@
 #define HEIGHT 600
 #define WHITE_COLOR 0xFFFFFFFF
 #define BLACK_COLOR 0x00000000
-#define A_GRAVITY 10
+#define A_GRAVITY 0.2
 
 struct Circle {
-  int x;
-  int y;
-  int radius;
-  int vx;
-  int vy;
+  double x;
+  double y;
+  double radius;
+  double vx;
+  double vy;
 };
 
 void FillCircle(SDL_Surface *psurface, struct Circle circle) {
-  int lower_x = circle.x - circle.radius;
-  int lower_y = circle.y - circle.radius;
-  int higher_x = circle.x + circle.radius;
-  int higher_y = circle.y + circle.radius;
+  double lower_x = circle.x - circle.radius;
+  double lower_y = circle.y - circle.radius;
+  double higher_x = circle.x + circle.radius;
+  double higher_y = circle.y + circle.radius;
 
-  int radius_squared = circle.radius * circle.radius;
+  double radius_squared = circle.radius * circle.radius;
 
-  for (int x = lower_x; x <= higher_x; x++) {
-    for (int y = lower_y; y <= higher_y; y++) {
-      int center_distance_squared =
+  for (double x = lower_x; x <= higher_x; x++) {
+    for (double y = lower_y; y <= higher_y; y++) {
+      double center_distance_squared =
           (x - circle.x) * (x - circle.x) + (y - circle.y) * (y - circle.y);
       if (center_distance_squared < radius_squared) {
         SDL_Rect pixel = (SDL_Rect){x, y, 1, 1};
@@ -40,6 +40,28 @@ void step(struct Circle *circle) {
   circle->x += circle->vx;
   circle->y += circle->vy;
   circle->vy += A_GRAVITY;
+
+  // Bounce on horizontal edges (left and right)
+  if (circle->x - circle->radius <= 0 || circle->x + circle->radius >= WIDTH) {
+    circle->vx = -circle->vx;
+
+    // Adjust position to prevent going out of bounds
+    if (circle->x - circle->radius <= 0)
+      circle->x = circle->radius;
+    if (circle->x + circle->radius >= WIDTH)
+      circle->x = WIDTH - circle->radius;
+  }
+
+  // Bounce on vertical edges (top and bottom)
+
+  if (circle->y - circle->radius <= 0 || circle->y + circle->radius >= HEIGHT) {
+    circle->vy = -circle->vy;
+    // Adjust position to prevent going out of bounds
+    if (circle->y - circle->radius <= 0)
+      circle->y = circle->radius;
+    if (circle->y + circle->radius >= HEIGHT)
+      circle->y = HEIGHT - circle->radius;
+  }
 }
 
 int main() {
@@ -68,6 +90,6 @@ int main() {
     FillCircle(psurface, circle);
     step(&circle);
     SDL_UpdateWindowSurface(pwindow);
-    SDL_Delay(100);
+    SDL_Delay(20);
   }
 }
