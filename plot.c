@@ -10,4 +10,13 @@ int main() {
   SDL_Window *pwindow =
       SDL_CreateWindow("Function Plotter", SDL_WINDOWPOS_CENTERED,
                        SDL_WINDOWPOS_CENTERED, WIDTH, HEIGHT, 0);
+  SDL_Delay(3000);
+
+  SDL_Event event;
+
+  while (SDL_PollEvent(&event)) {
+    if (event.type == SDL_QUIT) {
+      break;
+    }
+  }
 }
