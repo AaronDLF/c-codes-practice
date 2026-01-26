@@ -10,6 +10,11 @@
 #define HEIGHT 600
 #define COLOR 0x0000FF
 #define GRID_COLOR 0xCCCCCC
+#define X_START -10
+#define X_END 10
+#define Y_START -5
+#define Y_END 5
+#define STEP 0.1
 
 void draw_at_grid_coordinates(SDL_Surface *psurface, SDL_Rect *prect,
                               Uint32 color) {
@@ -25,13 +30,13 @@ void draw_grid(SDL_Surface *psurface) {
   x_axis.x = -WIDTH / 2;
   x_axis.y = 0;
   x_axis.w = WIDTH;
-  x_axis.h = 2;
+  x_axis.h = 1;
   draw_at_grid_coordinates(psurface, &x_axis, GRID_COLOR);
 
   SDL_Rect y_axis;
   y_axis.x = 0;
   y_axis.y = HEIGHT / 2;
-  y_axis.w = 2;
+  y_axis.w = 1;
   y_axis.h = HEIGHT;
   draw_at_grid_coordinates(psurface, &y_axis, GRID_COLOR);
 }
@@ -43,11 +48,20 @@ void draw_expr(SDL_Surface *psurface, char *expr) {
   te_variable vars[] = {{"x", &x}};
 
   int err;
-  te_expr *pexpr = te_compile(expr, vars, 1, &err);
+  te_expr *pexpr;
 
   if (pexpr) {
-    double res = te_eval(pexpr);
-    printf("The result of the expression is: %f ", res);
+
+    for (x = X_START; x <= X_END; x += STEP) {
+      pexpr = te_compile(expr, vars, 1, &err);
+      double res = te_eval(pexpr);
+      printf("The result of the expression is: %f \n", res);
+      SDL_Rect line = (SDL_Rect){
+          (float)(x * ((float)WIDTH / (X_END - X_START) / 2.0)),
+          (float)(res * ((float)HEIGHT / (Y_END - Y_START) / 2.0)), 1, 1};
+      draw_at_grid_coordinates(psurface, &line, COLOR);
+    }
+
   } else {
     fprintf(stderr, "Error compiling expression at position: %d\n", err);
     exit(-1);
