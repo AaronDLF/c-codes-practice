@@ -1,8 +1,10 @@
+#include "tinyexpr.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_surface.h>
 #include <SDL2/SDL_video.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #define WIDTH 900
 #define HEIGHT 600
@@ -34,21 +36,46 @@ void draw_grid(SDL_Surface *psurface) {
   draw_at_grid_coordinates(psurface, &y_axis, GRID_COLOR);
 }
 
-int main() {
+void draw_expr(SDL_Surface *psurface, char *expr) {
+
+  double x;
+
+  te_variable vars[] = {{"x", &x}};
+
+  int err;
+  te_expr *pexpr = te_compile(expr, vars, 1, &err);
+
+  if (pexpr) {
+    double res = te_eval(pexpr);
+    printf("The result of the expression is: %f ", res);
+  } else {
+    fprintf(stderr, "Error compiling expression at position: %d\n", err);
+    exit(-1);
+  }
+}
+
+int main(int argc, char *argv[]) {
   printf("Welcome to the function plotter!\n");
+
+  if (argc != 2) {
+    printf("Usage: %s <function>\n", argv[0]);
+    return 0;
+  }
+
+  char *expr = argv[1];
+
   SDL_Window *pwindow =
       SDL_CreateWindow("Function Plotter", SDL_WINDOWPOS_CENTERED,
                        SDL_WINDOWPOS_CENTERED, WIDTH, HEIGHT, 0);
 
   SDL_Surface *psurface = SDL_GetWindowSurface(pwindow);
 
-  SDL_Rect rect = (SDL_Rect){50, 50, 50, 50};
-
-  draw_at_grid_coordinates(psurface, &rect, COLOR);
   draw_grid(psurface);
+  draw_expr(psurface, expr);
 
   SDL_Event event;
   bool app_running = true;
+  SDL_UpdateWindowSurface(pwindow);
 
   while (app_running) {
 
@@ -57,6 +84,5 @@ int main() {
         app_running = false;
       }
     }
-    SDL_UpdateWindowSurface(pwindow);
   }
 }
