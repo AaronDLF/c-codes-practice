@@ -58,7 +58,7 @@ void draw_expr(SDL_Surface *psurface, char *expr) {
       printf("The result of the expression is: %f \n", res);
       SDL_Rect line = (SDL_Rect){
           (float)(x * ((float)WIDTH / (X_END - X_START) / 2.0)),
-          (float)(res * ((float)HEIGHT / (Y_END - Y_START) / 2.0)), 1, 1};
+          (float)(res * ((float)HEIGHT / (Y_END - Y_START) / 2.0)), 2, 2};
       draw_at_grid_coordinates(psurface, &line, COLOR);
     }
 
