@@ -1,36 +1,19 @@
 # C Codes Practice
 
-Monorepo de proyectos en C para practicar y aprender el lenguaje a través de diferentes ejercicios y aplicaciones.
+A monorepo of C projects for practicing and learning the language through different exercises and applications.
 
-## Estructura
+## Structure
 
-Este repositorio contiene múltiples proyectos independientes, cada uno en su propio directorio:
+This repository contains multiple independent projects, each in its own directory:
 
-- **random-walker**: Simulación de camino aleatorio con múltiples agentes que se mueven de forma estocástica por la pantalla.
-- **function-plotter**: Graficador de funciones matemáticas que utiliza tinyexpr para evaluar expresiones y renderizarlas en un plano cartesiano.
-- **bouncy-ball-animation**: Simulación física de una pelota que rebota con gravedad y trazado de trayectoria.
+- **random-walker**: Random walk simulation with multiple agents moving stochastically across the screen.
+- **function-plotter**: Mathematical function plotter that uses tinyexpr to evaluate expressions and render them on a cartesian plane.
+- **bouncy-ball-animation**: Physics simulation of a bouncing ball with gravity and trajectory tracing.
 
-## Requisitos
+## Building
 
-Todos los proyectos requieren SDL2 instalado en el sistema:
+Each project is compiled independently from its directory. Check the source files for specific build instructions and dependencies.
 
-```bash
-# Ubuntu/Debian
-sudo apt-get install libsdl2-dev
+## Running
 
-# Arch Linux
-sudo pacman -S sdl2
-```
-
-## Compilación
-
-Cada proyecto se compila de forma independiente desde su directorio:
-
-```bash
-cd <nombre-proyecto>
-gcc -o programa *.c -lSDL2 -lm
-```
-
-## Ejecución
-
-Cada proyecto tiene su propia forma de ejecutarse. Consulta los archivos fuente para ver los parámetros específicos de cada uno.
+Each project has its own way of running. Consult the source files to see the specific parameters for each one.
